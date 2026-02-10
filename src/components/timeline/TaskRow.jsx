@@ -35,6 +35,10 @@ export default function TaskRow({ task, onClick }) {
 
       <DomainBadge domain={task.domain} />
 
+      {task.custom && (
+        <span className="text-[9px] px-1 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-medium leading-none">Custom</span>
+      )}
+
       <span className={`flex-1 text-sm ${task.status === 'completed' ? 'text-text-muted line-through' : 'text-text-primary'}`}>
         {task.title}
       </span>

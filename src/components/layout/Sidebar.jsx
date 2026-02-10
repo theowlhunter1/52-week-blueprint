@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { usePlan } from '../../context/PlanContext';
 
@@ -51,6 +52,22 @@ function MoonIcon() {
 export default function Sidebar() {
   const { state, dispatch } = usePlan();
   const isDark = state.settings?.theme !== 'light';
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalDraft, setGoalDraft] = useState('');
+  const goalRef = useRef(null);
+
+  const goal = state.meta?.goal || '$95K → $250K+';
+
+  useEffect(() => {
+    if (editingGoal && goalRef.current) goalRef.current.focus();
+  }, [editingGoal]);
+
+  const saveGoal = () => {
+    setEditingGoal(false);
+    if (goalDraft.trim() && goalDraft.trim() !== goal) {
+      dispatch({ type: 'UPDATE_META', payload: { goal: goalDraft.trim() } });
+    }
+  };
 
   const toggleTheme = () => {
     dispatch({ type: 'UPDATE_SETTINGS', payload: { theme: isDark ? 'light' : 'dark' } });
@@ -81,7 +98,23 @@ export default function Sidebar() {
         ))}
       </nav>
       <div className="px-5 py-4 border-t border-border flex items-center justify-between">
-        <p className="text-xs text-text-muted">$95K → $250K+</p>
+        {editingGoal ? (
+          <input
+            ref={goalRef}
+            value={goalDraft}
+            onChange={e => setGoalDraft(e.target.value)}
+            onBlur={saveGoal}
+            onKeyDown={e => { if (e.key === 'Enter') saveGoal(); if (e.key === 'Escape') setEditingGoal(false); }}
+            className="text-xs text-text-muted bg-bg-tertiary border border-border rounded px-1.5 py-0.5 w-full mr-2 focus:outline-none focus:border-accent"
+          />
+        ) : (
+          <p
+            onClick={() => { setGoalDraft(goal); setEditingGoal(true); }}
+            className="text-xs text-text-muted cursor-pointer hover:text-accent transition-colors truncate mr-2"
+          >
+            {goal}
+          </p>
+        )}
         <button
           onClick={toggleTheme}
           className="p-1.5 rounded-lg text-text-secondary hover:text-accent hover:bg-bg-hover transition-colors"

@@ -99,6 +99,138 @@ function reducer(state, action) {
         ),
       };
     }
+    case 'UPDATE_TASK': {
+      const { taskId, updates } = action.payload;
+      const now = new Date().toISOString();
+      return {
+        ...state,
+        quarters: findAndUpdateTask(state.quarters, taskId, t => {
+          const changeNotes = [];
+          for (const [key, value] of Object.entries(updates)) {
+            if (t[key] !== value) {
+              changeNotes.push({
+                id: `n-${Date.now()}-${key}`,
+                text: `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} changed from "${t[key]}" to "${value}"`,
+                created_at: now,
+                type: 'edit',
+              });
+            }
+          }
+          return { ...t, ...updates, notes: [...t.notes, ...changeNotes] };
+        }),
+      };
+    }
+    case 'ADD_TASK': {
+      const { blockId, task } = action.payload;
+      const newTask = {
+        id: `custom-${Date.now()}`,
+        domain: 'technical',
+        status: 'not_started',
+        priority: 'normal',
+        deferred_to_week: null,
+        date_completed: null,
+        notes: [],
+        links: [],
+        custom: true,
+        ...task,
+      };
+      return {
+        ...state,
+        quarters: state.quarters.map(q => ({
+          ...q,
+          blocks: q.blocks.map(b =>
+            b.id === blockId ? { ...b, tasks: [...b.tasks, newTask] } : b
+          ),
+        })),
+      };
+    }
+    case 'DELETE_TASK': {
+      const { taskId } = action.payload;
+      return {
+        ...state,
+        quarters: state.quarters.map(q => ({
+          ...q,
+          blocks: q.blocks.map(b => ({
+            ...b,
+            tasks: b.tasks.filter(t => t.id !== taskId),
+          })),
+        })),
+      };
+    }
+    case 'MOVE_TASK': {
+      const { taskId, toWeek } = action.payload;
+      const now = new Date().toISOString();
+      let movedTask = null;
+
+      // Find and remove the task
+      const quartersWithout = state.quarters.map(q => ({
+        ...q,
+        blocks: q.blocks.map(b => ({
+          ...b,
+          tasks: b.tasks.filter(t => {
+            if (t.id === taskId) {
+              movedTask = {
+                ...t,
+                due_week: toWeek,
+                notes: [
+                  ...t.notes,
+                  { id: `n-${Date.now()}`, text: `Moved from Week ${t.due_week} to Week ${toWeek}`, created_at: now, type: 'edit' },
+                ],
+              };
+              return false;
+            }
+            return true;
+          }),
+        })),
+      }));
+
+      if (!movedTask) return state;
+
+      // Find the target block by matching toWeek against week_range
+      let placed = false;
+      const quartersWithMoved = quartersWithout.map(q => ({
+        ...q,
+        blocks: q.blocks.map(b => {
+          if (!placed && toWeek >= b.week_range[0] && toWeek <= b.week_range[1]) {
+            placed = true;
+            return { ...b, tasks: [...b.tasks, movedTask] };
+          }
+          return b;
+        }),
+      }));
+
+      // If no matching block found, place in the nearest block
+      if (!placed) {
+        let bestBlock = null;
+        let bestDist = Infinity;
+        for (const q of quartersWithMoved) {
+          for (const b of q.blocks) {
+            const dist = Math.min(Math.abs(toWeek - b.week_range[0]), Math.abs(toWeek - b.week_range[1]));
+            if (dist < bestDist) {
+              bestDist = dist;
+              bestBlock = b.id;
+            }
+          }
+        }
+        return {
+          ...state,
+          quarters: quartersWithMoved.map(q => ({
+            ...q,
+            blocks: q.blocks.map(b =>
+              b.id === bestBlock ? { ...b, tasks: [...b.tasks, movedTask] } : b
+            ),
+          })),
+        };
+      }
+
+      return { ...state, quarters: quartersWithMoved };
+    }
+    case 'UPDATE_META': {
+      return {
+        ...state,
+        meta: { ...state.meta, ...action.payload },
+      };
+    }
     case 'IMPORT_STATE': {
       return action.payload;
     }

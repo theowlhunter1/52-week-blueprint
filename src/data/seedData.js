@@ -1,6 +1,7 @@
 const seedData = {
   meta: {
     title: "From $95K Head of AI to $250K+ Executive",
+    goal: "From $95K Head of AI to $250K+ Executive",
     version: "1.0",
     created: "2026-02-10",
   },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { usePlan } from '../../context/PlanContext';
 import { getCurrentWeek, getCompletionStats } from '../../utils/weekCalculations';
 import ProgressRing from './ProgressRing';
@@ -9,8 +9,24 @@ import OverdueList from './OverdueList';
 import TaskDetailPanel from '../task/TaskDetailPanel';
 
 export default function Dashboard() {
-  const { state, getAllTasks } = usePlan();
+  const { state, getAllTasks, dispatch } = usePlan();
   const [selectedTask, setSelectedTask] = useState(null);
+  const [editingGoal, setEditingGoal] = useState(false);
+  const [goalDraft, setGoalDraft] = useState('');
+  const goalRef = useRef(null);
+
+  const goal = state.meta?.goal || 'From $95K Head of AI to $250K+ Executive';
+
+  useEffect(() => {
+    if (editingGoal && goalRef.current) goalRef.current.focus();
+  }, [editingGoal]);
+
+  const saveGoal = () => {
+    setEditingGoal(false);
+    if (goalDraft.trim() && goalDraft.trim() !== goal) {
+      dispatch({ type: 'UPDATE_META', payload: { goal: goalDraft.trim() } });
+    }
+  };
   const currentWeek = getCurrentWeek(state.settings?.startDate);
   const tasks = getAllTasks();
   const stats = getCompletionStats(tasks);
@@ -43,7 +59,23 @@ export default function Dashboard() {
     <div className="max-w-5xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
-        <p className="text-sm text-text-secondary mt-1">From $95K Head of AI to $250K+ Executive</p>
+        {editingGoal ? (
+          <input
+            ref={goalRef}
+            value={goalDraft}
+            onChange={e => setGoalDraft(e.target.value)}
+            onBlur={saveGoal}
+            onKeyDown={e => { if (e.key === 'Enter') saveGoal(); if (e.key === 'Escape') setEditingGoal(false); }}
+            className="text-sm text-text-secondary mt-1 bg-bg-tertiary border border-border rounded px-2 py-0.5 w-full max-w-md focus:outline-none focus:border-accent"
+          />
+        ) : (
+          <p
+            onClick={() => { setGoalDraft(goal); setEditingGoal(true); }}
+            className="text-sm text-text-secondary mt-1 cursor-pointer hover:text-accent transition-colors"
+          >
+            {goal}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
