@@ -48,6 +48,32 @@ function getBlockSummary(block, quarter) {
   };
 }
 
+function NarrativeSummary({ goal, version }) {
+  return (
+    <article className="prose prose-invert max-w-none prose-p:text-text-secondary prose-p:leading-relaxed prose-headings:text-text-primary">
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Narrative Summary</h2>
+      <p className="text-sm text-text-primary">
+        This plan is a single-year bridge from my current role as Head of AI (~$95K) to a $250K+ outcome as either a fractional Chief AI Officer (CAIO) or a full-time CAIO/VP of AI. The path is built on three pillars: <strong className="text-text-primary">governance credentials</strong>, <strong className="text-text-primary">fractional CAIO work</strong>, and <strong className="text-text-primary">multi-agent orchestration</strong> — not traditional ML engineering or cloud certs. The market is shifting. The EU AI Act goes live August 2026. Forrester and IAPP data show governance and “orchestrator who builds” profiles winning; the plan is aligned to that.
+      </p>
+      <p className="text-sm text-text-primary">
+        <strong className="text-text-primary">Months 1–3 (Q1)</strong> establish credibility and positioning. I earn the IAPP AIGP certification and the NVIDIA Agentic AI Professional credential, document every AI project with hard business metrics, and relaunch LinkedIn around governance and orchestration. I apply to executive education (Chicago Booth CAIO Program or Stanford HAI) and draft three fractional CAIO engagement packages — AI Value Rescue, Agent Architecture Sprint, and AI Governance Fast-Track — then begin outreach. By the end of Q1 I have two credentials, a published case study, and at least one serious fractional conversation (letter of intent or verbal). I also start research on Silicon Workforce Management so I can speak to how companies will manage AI agents as a workforce.
+      </p>
+      <p className="text-sm text-text-primary">
+        <strong className="text-text-primary">Months 4–6 (Q2)</strong> convert learning into revenue and artifacts. I attend executive education, build an inference economics financial model and an agent ROI framework (so I can tie AI to P&L in the language CFOs understand), and land my first fractional CAIO client. I build my first multi-agent system using MCP/agentlake thinking and draft the AI Governance Framework and the AI Agent Workforce Management Playbook. A second fractional client and a board-ready AI strategy presentation complete the quarter. Success here means $16K–$20K/month in fractional revenue and a clear portfolio of governance and orchestration deliverables.
+      </p>
+      <p className="text-sm text-text-primary">
+        <strong className="text-text-primary">Months 7–9 (Q3)</strong> are about portfolio and visibility. I publish the Governance Framework and the Agent Workforce Management Playbook as open-source assets, create the Inference Economics Model as a portfolio artifact, and build a multi-agent business workflow with full documentation. I start the AI ROI Measurement Dashboard, publish a substantive thought leadership article, and submit to speak at conferences. I also create the capstone AI Transformation Playbook and sharpen board-level AI communication. By the end of Q3 I have 3+ case studies, 120+ LinkedIn posts, and a clear narrative for recruiters and hiring managers.
+      </p>
+      <p className="text-sm text-text-primary">
+        <strong className="text-text-primary">Months 10–12 (Q4)</strong> are about execution and choice. I complete the ROI Dashboard, refine all portfolio projects, publish a capstone article, and go live with a personal site. I activate search firms, apply to 5–10 roles per week, and leverage my VC/family office network for AI leadership roles. The decision point: if fractional revenue is already at or above $250K annualized, I can be selective about full-time offers; if not, I push for a VP/Director of AI or CAIO role at $250K+ total comp. I close the year with a clear assessment and, if needed, a year-two plan.
+      </p>
+      <p className="text-sm text-text-primary">
+        <strong className="text-text-primary">Target outcome:</strong> $250K+ within 12 months. The fastest path is 2–3 fractional clients at $8K–$10K/month ($192K–$360K annualized). A full-time CAIO role at a meaningful company is often a 2–4 year arc, but the supply–demand imbalance and this credential-and-portfolio mix are meant to compress that. Every week is tied to study (what), rationale (why), and a concrete success metric so progress is measurable.
+      </p>
+    </article>
+  );
+}
+
 export default function ExecutiveSummary() {
   const { state } = usePlan();
   const goal = state.meta?.goal || 'From $95K Head of AI to $250K+ CAIO / VP of AI';
@@ -62,7 +88,7 @@ export default function ExecutiveSummary() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-text-primary">Executive Summary</h1>
         <p className="text-sm text-text-secondary mt-1">
-          52-week plan: what you’re studying, why, and how success is measured
+          Narrative overview and week-by-week breakdown
         </p>
         <div className="mt-4 p-4 rounded-lg bg-bg-secondary border border-border">
           <p className="text-sm font-medium text-accent">{goal}</p>
@@ -72,6 +98,11 @@ export default function ExecutiveSummary() {
         </div>
       </div>
 
+      <section className="mb-10 p-5 rounded-xl bg-bg-secondary border border-border">
+        <NarrativeSummary goal={goal} version={version} />
+      </section>
+
+      <h2 className="text-lg font-semibold text-text-primary mb-4">Week-by-week breakdown</h2>
       <div className="space-y-6">
         {blocks.map((row, i) => (
           <section
