@@ -1,11 +1,11 @@
 # 52-Week Blueprint
 
 ## What This Is
-A React dashboard app that tracks a 52-week career transition plan: $95K Head of AI → $250K+ CAIO/VP of AI. The plan is built around governance credentials (IAPP AIGP), fractional CAIO work, multi-agent orchestration skills (MCP/A2A), and executive education — NOT traditional Python/ML/AWS certification paths (those were cut in v2.0).
+A React dashboard app that tracks a 52-week career transition plan: $95K Head of AI → $250K+ CAIO/VP of AI. The plan (v3.0) is organized around four pillars: governance & risk, strategy & transformation, systems & platforms, and fractional CAIO & executive positioning. A structured certification spine runs through the year: AIGP (Q1) → Google Cloud Gen-AI Leader (Q2) → NVIDIA NCP-AAI (Q3) → AWS (Q4).
 
 ## Tech Stack
 - React 19 + Vite 7 + Tailwind CSS 4 + Recharts
-- React Router (3 routes: Dashboard `/`, Timeline `/timeline`, Settings `/settings`)
+- React Router (4 routes: Dashboard `/`, Timeline `/timeline`, Executive Summary `/summary`, Settings `/settings`)
 - State: `useReducer` + localStorage persistence (key: `blueprint-52-week`)
 - Deployed on Vercel
 
@@ -42,7 +42,7 @@ State is auto-saved to localStorage with 300ms debounce. `RESET` action restores
 src/
 ├── App.jsx                          # Router + ThemeApplier + PlanProvider
 ├── context/PlanContext.jsx           # All state logic, reducer, localStorage
-├── data/seedData.js                  # Plan content (v2.0 — governance/orchestration focus)
+├── data/seedData.js                  # Plan content (v3.0 — four pillars + cert spine)
 ├── components/
 │   ├── dashboard/
 │   │   ├── Dashboard.jsx             # Main view: progress ring, domain balance, week tasks
@@ -61,7 +61,10 @@ src/
 │   │   ├── TaskNotes.jsx             # Notes on a task
 │   │   ├── DomainBadge.jsx           # Colored domain label
 │   │   └── TaskStatusBadge.jsx       # Status pill
-│   ├── layout/MainLayout.jsx         # Shell with nav
+│   ├── summary/ExecutiveSummary.jsx   # Narrative prose + week-by-week breakdown
+│   ├── layout/
+│   │   ├── MainLayout.jsx            # Shell with nav
+│   │   └── Sidebar.jsx               # Sidebar navigation
 │   └── settings/Settings.jsx         # Start date, theme, reset, import/export
 ├── hooks/useLocalStorage.js
 └── utils/
@@ -70,10 +73,12 @@ src/
 ```
 
 ## Important Context
-- **v2.0 (Feb 2026)**: Complete rewrite of plan content from traditional ML/Python/AWS path → governance + fractional CAIO + orchestration. Driven by Compass analysis showing ~40% of original plan was wasted effort given AI capability shifts (Claude Opus 4.6, agentic coding, EU AI Act Aug 2026).
+- **v3.0 (Feb 2026)**: Restructured cert spine across all 4 quarters (AIGP Q1 → Gen-AI Leader Q2 → NCP-AAI Q3 → AWS Q4). Added Google Cloud Gen-AI Leader and AWS certs. Added AI Governance Charter and Risk Register as Q1 deliverables. Reframed around four pillars: governance & risk, strategy & transformation, systems & platforms, fractional CAIO & executive positioning. Split Q1 weeks 5–8 into two blocks.
+- **v2.0 (Feb 2026)**: Earlier rewrite from traditional ML/Python/AWS path → governance + fractional CAIO + orchestration. Driven by Compass analysis showing ~40% of original plan was wasted effort given AI capability shifts.
 - **localStorage matters**: Editing seedData.js only affects new users or after a Reset. Existing users must Reset in Settings to pick up seed changes.
 - **User profile**: Non-traditional background (church planting → family office AI → CAIO). The plan leverages this as a strength, not a weakness.
-- **77 tasks** across 4 quarters, 18 week-blocks. Task IDs: t001–t077.
+- **78 tasks** across 4 quarters, 18 week-blocks. Task IDs: t001–t078.
+- **Certification spine**: IAPP AIGP (Q1 w7–8) → Google Cloud Gen-AI Leader (Q2 w22–24) → NVIDIA NCP-AAI (Q3 w31–34) → AWS AI/Architecture (Q4 w44–47).
 - **Fractional CAIO** is the primary income vehicle (2–3 clients at $8K–$10K/month = $192K–$360K/yr).
 
 ## Commands
