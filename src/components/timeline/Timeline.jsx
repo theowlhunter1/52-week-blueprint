@@ -3,11 +3,13 @@ import { usePlan } from '../../context/PlanContext';
 import { getCurrentWeek } from '../../utils/weekCalculations';
 import QuarterSection from './QuarterSection';
 import TaskDetailPanel from '../task/TaskDetailPanel';
+import TimelineProgressBar from './TimelineProgressBar';
 
 export default function Timeline() {
   const { state } = usePlan();
   const [selectedTask, setSelectedTask] = useState(null);
   const currentWeek = getCurrentWeek(state.settings?.startDate);
+  const allBlocks = state.quarters.flatMap(q => q.blocks);
 
   useEffect(() => {
     const el = document.getElementById('current-week');
@@ -27,6 +29,10 @@ export default function Timeline() {
           <span className="text-2xl font-bold text-accent">Week {currentWeek}</span>
           <span className="text-sm text-text-muted ml-1">of 52</span>
         </div>
+      </div>
+
+      <div className="sticky top-0 z-10 bg-bg-primary/95 backdrop-blur-sm border-b border-border pb-4 mb-6">
+        <TimelineProgressBar quarters={state.quarters} allBlocks={allBlocks} startDate={state.settings?.startDate} />
       </div>
 
       <div className="space-y-8">
