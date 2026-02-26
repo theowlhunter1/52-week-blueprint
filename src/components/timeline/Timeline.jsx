@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { usePlan } from '../../context/PlanContext';
 import { getCurrentWeek } from '../../utils/weekCalculations';
 import QuarterSection from './QuarterSection';
@@ -9,7 +9,7 @@ export default function Timeline() {
   const { state } = usePlan();
   const [selectedTask, setSelectedTask] = useState(null);
   const currentWeek = getCurrentWeek(state.settings?.startDate);
-  const allBlocks = state.quarters.flatMap(q => q.blocks);
+  const allBlocks = useMemo(() => state.quarters.flatMap(q => q.blocks), [state.quarters]);
 
   useEffect(() => {
     const el = document.getElementById('current-week');
