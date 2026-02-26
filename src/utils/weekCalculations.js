@@ -62,3 +62,91 @@ export function getOverdueTasks(tasks, currentWeek) {
 export function getThisWeekTasks(tasks, currentWeek) {
   return tasks.filter(t => t.due_week === currentWeek);
 }
+
+/**
+ * Compute adaptive start/end dates for each block, accounting for early closures.
+ * Returns a Map of blockId -> { adaptiveStart, adaptiveEnd, originalStart, originalEnd }.
+ */
+export function getAdaptiveBlockDates(allBlocks, startDate) {
+  const result = new Map();
+  if (!startDate || !allBlocks || allBlocks.length === 0) return result;
+
+  // Sort blocks by week_range start
+  const sorted = [...allBlocks].sort((a, b) => a.week_range[0] - b.week_range[0]);
+
+  let nextStart = null;
+
+  for (const block of sorted) {
+    const originalStart = getWeekDate(startDate, block.week_range[0]);
+    const originalEndBase = getWeekDate(startDate, block.week_range[1]);
+    const originalEnd = new Date(originalEndBase);
+    originalEnd.setDate(originalEnd.getDate() + 6);
+
+    const originalDuration = originalEnd.getTime() - originalStart.getTime();
+
+    const adaptiveStart =
+      nextStart && nextStart < originalStart ? new Date(nextStart) : new Date(originalStart);
+
+    const adaptiveEnd = new Date(adaptiveStart.getTime() + originalDuration);
+
+    result.set(block.id, {
+      adaptiveStart,
+      adaptiveEnd,
+      originalStart: new Date(originalStart),
+      originalEnd: new Date(originalEnd),
+    });
+
+    if (block.closed && block.closed_date) {
+      const closedDate = new Date(block.closed_date);
+      nextStart = new Date(closedDate);
+      nextStart.setDate(nextStart.getDate() + 1);
+    } else {
+      nextStart = new Date(adaptiveEnd);
+      nextStart.setDate(nextStart.getDate() + 1);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Compute schedule status based on closed blocks and time saved.
+ * Returns { bufferDays, weeksAhead, closedCount, totalBlocks, label }.
+ */
+export function getScheduleStatus(allBlocks, startDate) {
+  if (!startDate || !allBlocks || allBlocks.length === 0) {
+    return { bufferDays: 0, weeksAhead: 0, closedCount: 0, totalBlocks: 0, label: 'On track' };
+  }
+
+  const totalBlocks = allBlocks.length;
+  let closedCount = 0;
+  let bufferDays = 0;
+
+  for (const block of allBlocks) {
+    if (block.closed && block.closed_date) {
+      closedCount++;
+      const originalEndBase = getWeekDate(startDate, block.week_range[1]);
+      const originalEnd = new Date(originalEndBase);
+      originalEnd.setDate(originalEnd.getDate() + 6);
+
+      const closedDate = new Date(block.closed_date);
+      const daysSaved = Math.floor((originalEnd - closedDate) / (24 * 60 * 60 * 1000));
+      if (daysSaved > 0) {
+        bufferDays += daysSaved;
+      }
+    }
+  }
+
+  const weeksAhead = Math.floor(bufferDays / 7);
+
+  let label;
+  if (weeksAhead >= 1) {
+    label = `${weeksAhead} week${weeksAhead > 1 ? 's' : ''} ahead`;
+  } else if (bufferDays > 0) {
+    label = `${bufferDays} day${bufferDays > 1 ? 's' : ''} ahead`;
+  } else {
+    label = 'On track';
+  }
+
+  return { bufferDays, weeksAhead, closedCount, totalBlocks, label };
+}

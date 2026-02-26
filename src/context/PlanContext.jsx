@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 import seedData from '../data/seedData';
+import { generateExecFraming } from '../utils/execFramingTemplates';
 
 const STORAGE_KEY = 'blueprint-52-week';
 const PlanContext = createContext(null);
@@ -134,6 +135,9 @@ function reducer(state, action) {
         custom: true,
         ...task,
       };
+      if (newTask.work && newTask.plan_pillar) {
+        newTask.exec_framing = generateExecFraming(newTask.plan_pillar, newTask.domain);
+      }
       return {
         ...state,
         quarters: state.quarters.map(q => ({
@@ -233,6 +237,31 @@ function reducer(state, action) {
     }
     case 'IMPORT_STATE': {
       return action.payload;
+    }
+    case 'CLOSE_BLOCK': {
+      const { blockId } = action.payload;
+      const now = new Date().toISOString();
+      return {
+        ...state,
+        quarters: state.quarters.map(q => ({
+          ...q,
+          blocks: q.blocks.map(b =>
+            b.id === blockId ? { ...b, closed: true, closed_date: now } : b
+          ),
+        })),
+      };
+    }
+    case 'REOPEN_BLOCK': {
+      const { blockId } = action.payload;
+      return {
+        ...state,
+        quarters: state.quarters.map(q => ({
+          ...q,
+          blocks: q.blocks.map(b =>
+            b.id === blockId ? { ...b, closed: false, closed_date: null } : b
+          ),
+        })),
+      };
     }
     case 'RESET': {
       return structuredClone(seedData);
