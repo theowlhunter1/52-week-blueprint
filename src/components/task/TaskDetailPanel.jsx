@@ -3,6 +3,7 @@ import { usePlan } from '../../context/PlanContext';
 import DomainBadge from './DomainBadge';
 import TaskStatusBadge from './TaskStatusBadge';
 import TaskNotes from './TaskNotes';
+import { generateExecFraming, PILLAR_LABELS } from '../../utils/execFramingTemplates';
 
 const statuses = ['not_started', 'in_progress', 'completed', 'skipped', 'deferred'];
 const domains = ['technical', 'strategy', 'leadership', 'credentials', 'networking', 'portfolio'];
@@ -191,6 +192,74 @@ export default function TaskDetailPanel({ taskId, onClose }) {
               multiline
             />
           </div>
+
+          {task.work && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <h3 className="text-xs font-medium text-text-muted uppercase tracking-wide mb-3">Plan Connection</h3>
+
+              <label className="block text-xs text-text-secondary mb-1">Pillar</label>
+              <select
+                value={task.plan_pillar || 'governance-risk'}
+                onChange={e => {
+                  const newPillar = e.target.value;
+                  dispatch({
+                    type: 'UPDATE_TASK',
+                    payload: {
+                      taskId: task.id,
+                      updates: {
+                        plan_pillar: newPillar,
+                        exec_framing: generateExecFraming(newPillar, task.domain),
+                      },
+                    },
+                  });
+                }}
+                className="text-xs bg-bg-secondary border border-border rounded-lg px-2 py-1.5 text-text-primary w-full focus:outline-none focus:border-accent"
+              >
+                {Object.entries(PILLAR_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+
+              <div className="mt-3">
+                <label className="block text-xs text-text-secondary mb-1">Exec Framing</label>
+                <div className="text-xs text-text-secondary bg-bg-tertiary rounded-lg p-3 border-l-2 border-accent/50 italic leading-relaxed">
+                  {task.exec_framing || 'No framing generated yet.'}
+                </div>
+              </div>
+
+              <button
+                onClick={() => dispatch({
+                  type: 'UPDATE_TASK',
+                  payload: {
+                    taskId: task.id,
+                    updates: {
+                      exec_framing: generateExecFraming(task.plan_pillar || 'governance-risk', task.domain),
+                    },
+                  },
+                })}
+                className="mt-1 text-[10px] text-accent hover:text-accent/80 transition-colors"
+              >
+                ↻ Regenerate
+              </button>
+
+              <div className="mt-3">
+                <label className="block text-xs text-text-secondary mb-1">My Narrative</label>
+                <textarea
+                  value={task.plan_narrative || ''}
+                  onChange={e => dispatch({
+                    type: 'UPDATE_TASK',
+                    payload: {
+                      taskId: task.id,
+                      updates: { plan_narrative: e.target.value },
+                    },
+                  })}
+                  placeholder="How does this work connect to your career plan?"
+                  rows={3}
+                  className="w-full text-xs bg-bg-secondary border border-border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:border-accent resize-none"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Move to Week */}
           <div>
