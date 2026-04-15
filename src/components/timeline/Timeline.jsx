@@ -21,7 +21,7 @@ export default function Timeline() {
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Timeline</h1>
           <p className="text-sm text-text-secondary mt-1">Quarterly career development plan</p>

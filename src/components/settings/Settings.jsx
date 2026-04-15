@@ -56,7 +56,7 @@ export default function Settings() {
         <div className="bg-bg-secondary border border-border rounded-xl p-5">
           <h3 className="text-sm font-medium text-text-primary mb-1">Data Management</h3>
           <p className="text-xs text-text-muted mb-4">Export, import, or reset your plan data.</p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
             <button
               onClick={handleExport}
               className="px-4 py-2 bg-accent text-bg-primary rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors"

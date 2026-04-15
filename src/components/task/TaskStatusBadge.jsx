@@ -9,7 +9,7 @@ const statusConfig = {
 export default function TaskStatusBadge({ status }) {
   const config = statusConfig[status] || statusConfig.not_started;
   return (
-    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${config.class}`}>
+    <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${config.class}`}>
       {config.label}
     </span>
   );

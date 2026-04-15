@@ -71,7 +71,7 @@ export default function Dashboard() {
 
       <div className="bg-bg-secondary border border-border rounded-xl p-5 mb-5">
         <h3 className="text-sm font-medium text-text-secondary mb-4">Domain Balance</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {domainStats.map(d => (
             <div key={d.domain} className="flex items-center gap-3">
               <div className="w-2 h-8 rounded-full" style={{ backgroundColor: DOMAIN_CONFIG[d.domain]?.cssVar }} />

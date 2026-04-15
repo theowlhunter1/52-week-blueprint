@@ -20,7 +20,7 @@ export default function TaskRow({ task, onClick }) {
     >
       <button
         onClick={toggleComplete}
-        className={`w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+        className={`w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
           task.status === 'completed'
             ? 'bg-status-completed border-status-completed'
             : 'border-border group-hover:border-text-muted'
