@@ -31,7 +31,7 @@ export default function Settings() {
   };
 
   const handleReset = () => {
-    if (!window.confirm('Reset all data to the original 52-week plan? This cannot be undone.')) return;
+    if (!window.confirm('Reset all data to the original plan? This cannot be undone.')) return;
     if (!window.confirm('Are you sure? All progress, notes, and changes will be lost.')) return;
     dispatch({ type: 'RESET' });
   };
@@ -88,9 +88,9 @@ export default function Settings() {
         <div className="bg-bg-secondary border border-border rounded-xl p-5">
           <h3 className="text-sm font-medium text-text-primary mb-1">About</h3>
           <p className="text-xs text-text-muted">
-            52-Week Career Blueprint Tracker v1.0
+            Career Blueprint Tracker v4.0
             <br />
-            From $95K Head of AI to $250K+ Executive
+            Agent Engineer to $200K+
             <br />
             All data stored locally in your browser.
           </p>

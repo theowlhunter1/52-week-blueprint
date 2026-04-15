@@ -2,15 +2,7 @@ import { useState } from 'react';
 import { usePlan } from '../../context/PlanContext';
 import { getWeekDate } from '../../utils/weekCalculations';
 import TaskRow from './TaskRow';
-
-const domains = ['technical', 'strategy', 'leadership', 'credentials', 'networking', 'portfolio'];
-
-const PILLAR_OPTIONS = [
-  { value: 'governance-risk', label: 'Governance & Risk' },
-  { value: 'strategy-transformation', label: 'Strategy & Transformation' },
-  { value: 'systems-platforms', label: 'Systems & Platforms' },
-  { value: 'fractional-exec', label: 'Fractional CAIO & Exec Positioning' },
-];
+import { DOMAINS, DOMAIN_CONFIG, DEFAULT_DOMAIN, PILLAR_OPTIONS, DEFAULT_PILLAR } from '../../constants/domains';
 
 function formatShortDate(date) {
   if (!date) return '';
@@ -23,9 +15,9 @@ export default function WeekBlock({ block, isCurrentWeek, onTaskClick }) {
   const [expanded, setExpanded] = useState(isCurrentWeek);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [newDomain, setNewDomain] = useState('technical');
+  const [newDomain, setNewDomain] = useState(DEFAULT_DOMAIN);
   const [isWorkTask, setIsWorkTask] = useState(false);
-  const [planPillar, setPlanPillar] = useState('governance-risk');
+  const [planPillar, setPlanPillar] = useState(DEFAULT_PILLAR);
   const [planNarrative, setPlanNarrative] = useState('');
   const completedCount = block.tasks.filter(t => t.status === 'completed').length;
   const isClosed = block.closed === true;
@@ -52,9 +44,9 @@ export default function WeekBlock({ block, isCurrentWeek, onTaskClick }) {
       },
     });
     setNewTitle('');
-    setNewDomain('technical');
+    setNewDomain(DEFAULT_DOMAIN);
     setIsWorkTask(false);
-    setPlanPillar('governance-risk');
+    setPlanPillar(DEFAULT_PILLAR);
     setPlanNarrative('');
     setShowAddForm(false);
   };
@@ -177,8 +169,8 @@ export default function WeekBlock({ block, isCurrentWeek, onTaskClick }) {
                   onChange={e => setNewDomain(e.target.value)}
                   className="text-xs bg-bg-secondary border border-border rounded-lg px-2 py-1 text-text-primary focus:outline-none focus:border-accent"
                 >
-                  {domains.map(d => (
-                    <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+                  {DOMAINS.map(d => (
+                    <option key={d} value={d}>{DOMAIN_CONFIG[d]?.label || d}</option>
                   ))}
                 </select>
                 <label className="flex items-center gap-1.5 text-xs text-text-secondary cursor-pointer">
@@ -193,7 +185,7 @@ export default function WeekBlock({ block, isCurrentWeek, onTaskClick }) {
                 <div className="flex-1" />
                 <button
                   type="button"
-                  onClick={() => { setShowAddForm(false); setNewTitle(''); setIsWorkTask(false); setPlanPillar('governance-risk'); setPlanNarrative(''); }}
+                  onClick={() => { setShowAddForm(false); setNewTitle(''); setIsWorkTask(false); setPlanPillar(DEFAULT_PILLAR); setPlanNarrative(''); }}
                   className="text-xs px-3 py-1 rounded-lg border border-border text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Cancel

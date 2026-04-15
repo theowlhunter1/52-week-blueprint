@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 import seedData from '../data/seedData';
 import { generateExecFraming } from '../utils/execFramingTemplates';
+import { DEFAULT_DOMAIN } from '../constants/domains';
 
 const STORAGE_KEY = 'blueprint-52-week';
 const PlanContext = createContext(null);
@@ -125,7 +126,7 @@ function reducer(state, action) {
       const { blockId, task } = action.payload;
       const newTask = {
         id: `custom-${Date.now()}`,
-        domain: 'technical',
+        domain: DEFAULT_DOMAIN,
         status: 'not_started',
         priority: 'normal',
         deferred_to_week: null,

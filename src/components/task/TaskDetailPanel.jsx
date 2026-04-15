@@ -4,9 +4,9 @@ import DomainBadge from './DomainBadge';
 import TaskStatusBadge from './TaskStatusBadge';
 import TaskNotes from './TaskNotes';
 import { generateExecFraming, PILLAR_LABELS } from '../../utils/execFramingTemplates';
+import { DOMAINS, DOMAIN_CONFIG, DEFAULT_PILLAR, MAX_WEEK } from '../../constants/domains';
 
 const statuses = ['not_started', 'in_progress', 'completed', 'skipped', 'deferred'];
-const domains = ['technical', 'strategy', 'leadership', 'credentials', 'networking', 'portfolio'];
 const priorities = ['normal', 'high', 'critical'];
 
 function EditableText({ value, onSave, multiline = false, className = '' }) {
@@ -81,7 +81,7 @@ export default function TaskDetailPanel({ taskId, onClose }) {
 
   const handleMove = () => {
     const week = parseInt(moveWeek, 10);
-    if (week >= 1 && week <= 52) {
+    if (week >= 1 && week <= MAX_WEEK) {
       dispatch({ type: 'MOVE_TASK', payload: { taskId: task.id, toWeek: week } });
       setMoveWeek('');
     }
@@ -155,8 +155,8 @@ export default function TaskDetailPanel({ taskId, onClose }) {
               onChange={e => handleUpdate('domain', e.target.value)}
               className="text-sm bg-bg-tertiary border border-border rounded-lg px-3 py-1.5 text-text-primary focus:outline-none focus:border-accent"
             >
-              {domains.map(d => (
-                <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+              {DOMAINS.map(d => (
+                <option key={d} value={d}>{DOMAIN_CONFIG[d]?.label || d}</option>
               ))}
             </select>
           </div>
@@ -199,7 +199,7 @@ export default function TaskDetailPanel({ taskId, onClose }) {
 
               <label className="block text-xs text-text-secondary mb-1">Pillar</label>
               <select
-                value={task.plan_pillar || 'governance-risk'}
+                value={task.plan_pillar || DEFAULT_PILLAR}
                 onChange={e => {
                   const newPillar = e.target.value;
                   dispatch({
@@ -233,7 +233,7 @@ export default function TaskDetailPanel({ taskId, onClose }) {
                   payload: {
                     taskId: task.id,
                     updates: {
-                      exec_framing: generateExecFraming(task.plan_pillar || 'governance-risk', task.domain),
+                      exec_framing: generateExecFraming(task.plan_pillar || DEFAULT_PILLAR, task.domain),
                     },
                   },
                 })}
@@ -268,7 +268,7 @@ export default function TaskDetailPanel({ taskId, onClose }) {
               <input
                 type="number"
                 min={1}
-                max={52}
+                max={MAX_WEEK}
                 value={moveWeek}
                 onChange={e => setMoveWeek(e.target.value)}
                 placeholder={String(task.due_week)}

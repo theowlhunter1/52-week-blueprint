@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePlan } from '../../context/PlanContext';
 import { getCurrentWeek, getCompletionStats } from '../../utils/weekCalculations';
+import { DOMAINS, DOMAIN_CONFIG } from '../../constants/domains';
 import ProgressRing from './ProgressRing';
 import CurrentWeek from './CurrentWeek';
 import QuarterBars from './QuarterBars';
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const [goalDraft, setGoalDraft] = useState('');
   const goalRef = useRef(null);
 
-  const goal = state.meta?.goal || 'From $95K Head of AI to $250K+ Executive';
+  const goal = state.meta?.goal || 'Agent Engineer to $200K+';
 
   useEffect(() => {
     if (editingGoal && goalRef.current) goalRef.current.focus();
@@ -31,29 +32,11 @@ export default function Dashboard() {
   const tasks = getAllTasks();
   const stats = getCompletionStats(tasks);
 
-  const domainStats = ['technical', 'strategy', 'leadership', 'credentials', 'networking', 'portfolio'].map(domain => {
+  const domainStats = DOMAINS.map(domain => {
     const domainTasks = tasks.filter(t => t.domain === domain);
     const s = getCompletionStats(domainTasks);
     return { domain, ...s };
   });
-
-  const domainColors = {
-    technical: 'var(--color-domain-technical)',
-    strategy: 'var(--color-domain-strategy)',
-    leadership: 'var(--color-domain-leadership)',
-    credentials: 'var(--color-domain-credentials)',
-    networking: 'var(--color-domain-networking)',
-    portfolio: 'var(--color-domain-portfolio)',
-  };
-
-  const domainLabels = {
-    technical: 'Technical',
-    strategy: 'Strategy',
-    leadership: 'Leadership',
-    credentials: 'Credentials',
-    networking: 'Networking',
-    portfolio: 'Portfolio',
-  };
 
   return (
     <div className="max-w-5xl">
@@ -91,16 +74,16 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {domainStats.map(d => (
             <div key={d.domain} className="flex items-center gap-3">
-              <div className="w-2 h-8 rounded-full" style={{ backgroundColor: domainColors[d.domain] }} />
+              <div className="w-2 h-8 rounded-full" style={{ backgroundColor: DOMAIN_CONFIG[d.domain]?.cssVar }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-text-primary">{domainLabels[d.domain]}</span>
+                  <span className="text-xs font-medium text-text-primary">{DOMAIN_CONFIG[d.domain]?.label || d.domain}</span>
                   <span className="text-xs text-text-muted">{d.percentage}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-bg-tertiary rounded-full overflow-hidden mt-1">
                   <div
                     className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${d.percentage}%`, backgroundColor: domainColors[d.domain] }}
+                    style={{ width: `${d.percentage}%`, backgroundColor: DOMAIN_CONFIG[d.domain]?.cssVar }}
                   />
                 </div>
               </div>

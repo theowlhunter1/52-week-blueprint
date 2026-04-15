@@ -1,38 +1,30 @@
 import { usePlan } from '../../context/PlanContext';
+import { DOMAINS } from '../../constants/domains';
 
 /**
  * Success metrics per block id — executive-summary style deliverables.
  * Kept in sync with plan; update when blocks change.
  */
 const BLOCK_SUCCESS_METRICS = {
-  'q1-w1-2': 'AIGP exam date booked; structured study schedule in place; LinkedIn updated; first positioning post live; 10 AI/data/governance leaders connected.',
-  'q1-w3-4': '3–5 case studies drafted; at least one exec-ed application submitted (or deliberate decision not to); 2–3 posts/week cadence locked.',
-  'q1-w5-6': 'AIGP content 70–80% complete; one full practice exam done; Governance Charter v0.1 and populated Risk Register completed.',
-  'q1-w7-8': 'AIGP passed (or exam taken with retake plan); 3 engagement packages drafted; at least 1 case study refined and ready to share.',
-  'q1-w9-10': 'AI Strategy Brief v0.1 completed and shared internally; Gen-AI Leader exam blueprint reviewed; study plan laid out.',
-  'q1-w11-13': '1 serious fractional CAIO discussion (verbal or LOI-ish); 3 search firms/exec recruiters contacted with updated narrative.',
-  'q2-w14-17': 'Exec-ed started or declined intentionally; inference economics spreadsheet built; agent ROI framework drafted; Gen-AI Leader practice questions started.',
-  'q2-w18-21': 'Gen-AI architecture and business case doc done; AI Governance Framework drafted; Agent Workforce Playbook started; first fractional client secured.',
-  'q2-w22-24': 'Gen-AI Leader cert achieved; vendor and safety frameworks drafted; second fractional deal in late-stage discussion.',
-  'q2-w25-26': 'Board-Ready AI Strategy deck done; 2+ recruiter conversations completed; fractional revenue trajectory assessed relative to $250K goal.',
-  'q3-w27-30': 'NCP-AAI study 50–60% complete; Enterprise AI Strategy Roadmap done; Governance Framework + Agent Workforce Playbook published.',
-  'q3-w31-34': 'Multi-agent business workflow built & documented; ROI Dashboard prototype started; NCP-AAI cert obtained; speaking submissions sent.',
-  'q3-w35-37': 'AI Transformation Playbook created; board-level AI communication playbook outlined; Rewired read and key ideas integrated.',
-  'q3-w38-39': 'Resume/CV updated; narrative doc done; 3–5 repos documented; 5+ exec/mentor conversations completed.',
-  'q4-w40-43': 'AWS exam scheduled and main domains studied; AI ROI Dashboard completed; personal site live; capstone article published.',
-  'q4-w44-47': 'AWS cert obtained; search firms activated; 5–10 quality applications/week; VC/family office network leveraged; fractional vs full-time decision mapped.',
-  'q4-w48-50': 'Interview decks and narratives rehearsed; 2–3 late-stage processes in motion (offers or close to it) OR robust fractional book building.',
-  'q4-w51-52': 'Clear decision on primary track; written year-two plan aligned to that track.',
+  'q1-w1-2': 'Document ingestion pipeline shipping: text extraction from VDR docs, pgvector embeddings stored, chunking strategy tested. RAG reference content watched.',
+  'q1-w3-4': 'AI analysis uses real document content via semantic search. Natural language VDR querying working. Chunk size experiment documented with real numbers. AIGP study started.',
+  'q1-w5-6': 'MCP server or tool calling implemented in DroplightOS. Multi-tool deal analysis agent built with system diagram. Tool schema experiment (vague vs strict) documented.',
+  'q1-w7-8': 'Retry/fallback/timeout wired on AI calls with measured before/after success rates. Sentry + observability live. Prompt injection red-team completed. Security PRs merged.',
+  'q1-w9-10': 'Eval pipeline with 15-20 test cases and measured baseline. Confidence thresholds and escalation paths added. Error boundaries across all routes. DroplightOS packaged as demo. Service offering defined.',
+  'q1-w11-12': 'AIGP exam taken (or booked with 70%+ mastery). AI services pitched to 3-5 prospects. $200K+ role landscape researched. GitHub and LinkedIn updated.',
+  'q2-w13-16': 'Multi-agent workflow built for complex deal analysis. Advanced RAG features (re-ranking, hybrid search) measured against Q1 baseline.',
+  'q2-w17-20': 'First paid AI implementation engagement landed. AIGP certified (or next cert started). Active in job market if pursuing employment path.',
+  'q2-w21-24': 'Clear decision: employment vs services. Agent Engineering Review written. Q3 direction set based on real data.',
 };
 
 function getBlockSummary(block, quarter) {
   const [start, end] = block.week_range || [0, 0];
   const weekLabel = start === end ? `Week ${start}` : `Weeks ${start}–${end}`;
 
-  const studyTasks = block.tasks
-    .filter(t => ['credentials', 'strategy', 'technical', 'portfolio', 'leadership'].includes(t.domain))
+  const keyTasks = block.tasks
+    .filter(t => DOMAINS.includes(t.domain))
     .slice(0, 5);
-  const whatList = studyTasks.map(t => t.title);
+  const whatList = keyTasks.map(t => t.title);
   const what = whatList.length ? whatList.join(' · ') : '—';
 
   const why = quarter.theme?.slice(0, 220) + (quarter.theme?.length > 220 ? '…' : '') || 'Aligns with quarter goals.';
@@ -49,27 +41,21 @@ function getBlockSummary(block, quarter) {
   };
 }
 
-function NarrativeSummary({ goal, version }) {
+function NarrativeSummary() {
   return (
     <article className="prose prose-invert max-w-none prose-p:text-text-secondary prose-p:leading-relaxed prose-headings:text-text-primary">
       <h2 className="text-lg font-semibold text-text-primary mb-4">Narrative Summary</h2>
       <p className="text-sm text-text-primary">
-        This plan is a single-year bridge from my current role as Head of AI (~$95K) to a $250K+ outcome as either a fractional Chief AI Officer (CAIO) or a full-time CAIO/VP of AI. It is organized around four pillars: <strong className="text-text-primary">governance &amp; risk</strong>, <strong className="text-text-primary">strategy &amp; transformation</strong>, <strong className="text-text-primary">systems &amp; platforms</strong>, and <strong className="text-text-primary">fractional CAIO &amp; executive positioning</strong>. A structured certification spine runs through the year — AIGP in Q1, Google Cloud Generative AI Leader in Q2, NVIDIA NCP-AAI in Q3, and AWS in Q4 — so each quarter adds a credential that reinforces the next. The EU AI Act goes live August 2026. The market rewards governance-fluent leaders who can also build and measure; this plan is aligned to that.
+        This plan is a quarterly sprint from $110K Head of AI to $200K+ — either through AI implementation services or a full-time AI engineering role. It is organized around four pillars: <strong className="text-text-primary">agent engineering &amp; infrastructure</strong>, <strong className="text-text-primary">AI reliability &amp; security</strong>, <strong className="text-text-primary">product delivery &amp; portfolio</strong>, and <strong className="text-text-primary">income &amp; market positioning</strong>. The approach is build-first: every skill gap gets filled by building it into DroplightOS, a production M&A platform with 47 database models, real auth, real AI analysis, and 152 merged PRs. Learning happens through doing, not studying.
       </p>
       <p className="text-sm text-text-primary">
-        <strong className="text-text-primary">Months 1–3 (Q1)</strong> establish credibility and positioning. I earn the IAPP AIGP certification (moved to weeks 7–8 for focused prep), create an AI Governance Charter and Risk Register, document every AI project with hard business metrics, and relaunch LinkedIn around governance and strategy. I apply to executive education (Chicago Booth CAIO Program or Stanford HAI), draft three fractional CAIO engagement packages — AI Value Rescue, AI Strategy &amp; Governance Fast-Track, and AI Transformation Sprint — and begin outreach. I also start research on Silicon Workforce Management and orient myself toward the Google Cloud Gen-AI Leader exam. By the end of Q1 I have the AIGP credential, governance artifacts, case studies, and at least one serious fractional conversation (letter of intent or verbal).
+        <strong className="text-text-primary">Q1 (Weeks 1–12): Wire the Pipeline, Ship the Agent.</strong> The first quarter fills the two biggest skill gaps — RAG and observability — by building them into DroplightOS. Weeks 1–4 add a document ingestion pipeline (text extraction, embeddings, chunking) and wire semantic search into the AI analysis suite so it analyzes real document content instead of metadata. Weeks 5–6 add MCP/tool calling and build a multi-tool deal analysis agent. Weeks 7–8 harden reliability (retry, fallback, circuit breaker) and security (Sentry, prompt injection testing). Weeks 9–10 build an eval pipeline and add product polish (confidence thresholds, error boundaries). Weeks 11–12 convert skills to income: take the AIGP exam, pitch AI services, research $200K+ roles, and update GitHub/LinkedIn.
       </p>
       <p className="text-sm text-text-primary">
-        <strong className="text-text-primary">Months 4–6 (Q2)</strong> convert learning into revenue and artifacts. I attend executive education, build an inference economics financial model and an agent ROI framework (tying AI to P&amp;L in the language CFOs understand), and close my first fractional CAIO client. I design a flagship gen-AI solution on GCP, draft the AI Governance Framework and begin the AI Agent Workforce Management Playbook. I earn the Google Cloud Generative AI Leader certification, pursue a second fractional client, and complete a board-ready AI strategy presentation. Success here means $16K–$20K/month in fractional revenue and a clear portfolio of governance, strategy, and platform deliverables.
+        <strong className="text-text-primary">Q2 (Weeks 13–24): Deepen, Deliver, Decide.</strong> The second quarter is intentionally loose — the AI landscape shifts too fast for detailed long-range plans. The direction: build complex multi-agent workflows, land the first paid AI implementation client, complete AIGP if not done, and make a deliberate decision about whether to pursue employment or services. Re-evaluate at the end of Q2 and plan Q3 based on what's actually happened, not assumptions.
       </p>
       <p className="text-sm text-text-primary">
-        <strong className="text-text-primary">Months 7–9 (Q3)</strong> are about portfolio and visibility. I earn the NVIDIA NCP-AAI certification, publish the Governance Framework and the Agent Workforce Management Playbook as open-source assets, build an Enterprise AI Strategy Roadmap, and construct a multi-agent business workflow with full documentation. I start the AI ROI Measurement Dashboard, publish a substantive thought leadership article, submit to speak at conferences, and create the capstone AI Transformation Playbook. By the end of Q3 I have three credentials, published frameworks, a clear career narrative, and an updated resume for recruiters and hiring managers.
-      </p>
-      <p className="text-sm text-text-primary">
-        <strong className="text-text-primary">Months 10–12 (Q4)</strong> are about execution and choice. I earn an AWS AI/architecture certification to complete the multi-cloud credential spine, finish the ROI Dashboard, refine all portfolio projects, publish a capstone article, and go live with a personal site. I activate search firms, apply to 5–10 quality roles per week, and leverage my VC/family office network for AI leadership roles. The decision point: if fractional revenue is already at or above $250K annualized, I can be selective about full-time offers; if not, I push for a VP/Director of AI or CAIO role at $250K+ total comp. I close the year with a clear assessment and a year-two plan aligned to whichever track I choose.
-      </p>
-      <p className="text-sm text-text-primary">
-        <strong className="text-text-primary">Target outcome:</strong> $250K+ within 12 months. The fastest path is 2–3 fractional clients at $8K–$10K/month ($192K–$360K annualized). A full-time CAIO role at a meaningful company is often a 2–4 year arc, but four stacked credentials (AIGP + Gen-AI Leader + NCP-AAI + AWS), published frameworks, and demonstrated fractional results are meant to compress that. Every week is tied to study (what), rationale (why), and a concrete success metric so progress is measurable.
+        <strong className="text-text-primary">Target outcome:</strong> $200K+ as quickly as possible. The fastest path is AI implementation services (2–3 clients at $8K–$10K/month). A full-time AI Engineer or Solutions Architect role at a company building agent infrastructure pays $180K–$250K+. Both paths benefit from the same proof: a production platform with real RAG, real agents, real reliability engineering, and measured eval results. AIGP adds governance credibility on top of engineering capability — a rare combination.
       </p>
     </article>
   );
@@ -77,8 +63,8 @@ function NarrativeSummary({ goal, version }) {
 
 export default function ExecutiveSummary() {
   const { state } = usePlan();
-  const goal = state.meta?.goal || 'From $95K Head of AI to $250K+ CAIO / VP of AI';
-  const version = state.meta?.version || '2.1';
+  const goal = state.meta?.goal || 'Agent Engineer to $200K+';
+  const version = state.meta?.version || '4.0';
 
   const blocks = state.quarters.flatMap(q =>
     q.blocks.map(b => getBlockSummary(b, q))
@@ -94,13 +80,13 @@ export default function ExecutiveSummary() {
         <div className="mt-4 p-4 rounded-lg bg-bg-secondary border border-border">
           <p className="text-sm font-medium text-accent">{goal}</p>
           <p className="text-xs text-text-muted mt-1">
-            Plan v{version} — Governance &amp; risk, strategy &amp; transformation, systems &amp; platforms, fractional CAIO &amp; executive positioning.
+            Plan v{version} — Agent engineering &amp; infrastructure, AI reliability &amp; security, product delivery &amp; portfolio, income &amp; market positioning.
           </p>
         </div>
       </div>
 
       <section className="mb-10 p-5 rounded-xl bg-bg-secondary border border-border">
-        <NarrativeSummary goal={goal} version={version} />
+        <NarrativeSummary />
       </section>
 
       <h2 className="text-lg font-semibold text-text-primary mb-4">Week-by-week breakdown</h2>
@@ -121,7 +107,7 @@ export default function ExecutiveSummary() {
               <h2 className="text-base font-semibold text-text-primary mb-3">{row.blockTitle}</h2>
               <dl className="grid gap-3 text-sm">
                 <div>
-                  <dt className="text-xs font-medium text-text-muted uppercase tracking-wide mb-0.5">What I’m studying</dt>
+                  <dt className="text-xs font-medium text-text-muted uppercase tracking-wide mb-0.5">Key activities</dt>
                   <dd className="text-text-primary">{row.what}</dd>
                 </div>
                 <div>
@@ -141,8 +127,8 @@ export default function ExecutiveSummary() {
       <div className="mt-10 p-4 rounded-lg bg-bg-tertiary border border-border text-sm text-text-secondary">
         <p className="font-medium text-text-primary mb-1">Target outcome</p>
         <p>
-          $250K+ within 12 months via fractional CAIO (2–3 clients at $8K–$10K/month) or full-time CAIO/VP AI role.
-          Full-time at a major company is typically a 2–4 year arc; credentials and demonstrated impact compress the timeline.
+          $200K+ via AI implementation services (2–3 clients at $8K–$10K/month) or full-time AI Engineer / Solutions Architect role ($180K–$250K+).
+          Both paths benefit from the same proof: production agent infrastructure with real RAG, real reliability, and measured results.
         </p>
       </div>
     </div>

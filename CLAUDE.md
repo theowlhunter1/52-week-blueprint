@@ -1,7 +1,7 @@
-# 52-Week Blueprint
+# Blueprint
 
 ## What This Is
-A React dashboard app that tracks a 52-week career transition plan: $95K Head of AI → $250K+ CAIO/VP of AI. The plan (v3.0) is organized around four pillars: governance & risk, strategy & transformation, systems & platforms, and fractional CAIO & executive positioning. A structured certification spine runs through the year: AIGP (Q1) → Google Cloud Gen-AI Leader (Q2) → NVIDIA NCP-AAI (Q3) → AWS (Q4).
+A React dashboard app that tracks a quarterly career development plan: $110K Head of AI → $200K+ Agent Engineer / AI Implementation. The plan (v4.0) is organized around four pillars: agent engineering & infrastructure, AI reliability & security, product delivery & portfolio, and income & market positioning. Learning is interleaved with building — every skill gap gets filled by building it into DroplightOS.
 
 ## Tech Stack
 - React 19 + Vite 7 + Tailwind CSS 4 + Recharts
@@ -15,16 +15,19 @@ A React dashboard app that tracks a 52-week career transition plan: $95K Head of
 The seed data is the single source of truth for plan content. Structure:
 ```
 seedData
-├── meta: { title, goal, version, created }
+├── meta: { title, goal, version, created, updated, revision_notes }
 ├── settings: { startDate, theme }
-├── quarters[4]: { id, name, theme, weeks, color, blocks[], milestones[] }
+├── quarters[2]: { id, name, theme, weeks, color, blocks[], milestones[] }
 │   └── blocks[]: { id, title, week_range: [start, end], tasks[] }
 │       └── tasks[]: { id, domain, title, description, status, priority, due_week, deferred_to_week, date_completed, notes[], links[] }
-└── resources: { books[], certifications[], courses[], podcasts[], conferences[], execEducation[], fractionalPlatforms[] }
+└── resources: {} (unused — retained for schema compatibility)
 ```
 
-### Domains (6 fixed — used in UI filtering and badges)
-`technical` | `strategy` | `leadership` | `credentials` | `networking` | `portfolio`
+### Domains (6 — defined in `src/constants/domains.js`)
+`build` | `learn` | `credentials` | `income` | `portfolio` | `community`
+
+### Pillars (4 — defined in `src/constants/domains.js`)
+`agent-engineering` | `ai-reliability` | `product-delivery` | `income-positioning`
 
 ### Task Statuses
 `not_started` | `in_progress` | `completed` | `skipped` | `deferred`
@@ -33,7 +36,7 @@ seedData
 `critical` | `high` | `normal`
 
 ### State Management (`src/context/PlanContext.jsx`)
-Reducer actions: `SET_TASK_STATUS`, `DEFER_TASK`, `ADD_NOTE`, `UPDATE_SETTINGS`, `TOGGLE_MILESTONE`, `UPDATE_TASK`, `ADD_TASK`, `DELETE_TASK`, `MOVE_TASK`, `UPDATE_META`, `IMPORT_STATE`, `RESET`
+Reducer actions: `SET_TASK_STATUS`, `DEFER_TASK`, `ADD_NOTE`, `UPDATE_SETTINGS`, `TOGGLE_MILESTONE`, `UPDATE_TASK`, `ADD_TASK`, `DELETE_TASK`, `MOVE_TASK`, `UPDATE_META`, `IMPORT_STATE`, `CLOSE_BLOCK`, `REOPEN_BLOCK`, `RESET`
 
 State is auto-saved to localStorage with 300ms debounce. `RESET` action restores seedData defaults.
 
@@ -41,25 +44,27 @@ State is auto-saved to localStorage with 300ms debounce. `RESET` action restores
 ```
 src/
 ├── App.jsx                          # Router + ThemeApplier + PlanProvider
+├── constants/domains.js             # Single source of truth: domains, pillars, defaults, MAX_WEEK
 ├── context/PlanContext.jsx           # All state logic, reducer, localStorage
-├── data/seedData.js                  # Plan content (v3.0 — four pillars + cert spine)
+├── data/seedData.js                 # Plan content (v4.0 — quarterly agent engineering)
 ├── components/
 │   ├── dashboard/
 │   │   ├── Dashboard.jsx             # Main view: progress ring, domain balance, week tasks
 │   │   ├── ProgressRing.jsx          # SVG circular progress
 │   │   ├── CurrentWeek.jsx           # Shows current week number
-│   │   ├── QuarterBars.jsx           # Quarter completion bars
+│   │   ├── QuarterBars.jsx           # Quarter completion bars (dynamic from state)
 │   │   ├── ThisWeekTasks.jsx         # Tasks due this week
 │   │   └── OverdueList.jsx           # Overdue tasks
 │   ├── timeline/
 │   │   ├── Timeline.jsx              # Full plan view by quarter
 │   │   ├── QuarterSection.jsx        # Quarter accordion
 │   │   ├── WeekBlock.jsx             # Week block with tasks
+│   │   ├── TimelineProgressBar.jsx   # Schedule status bar
 │   │   └── TaskRow.jsx               # Individual task row
 │   ├── task/
 │   │   ├── TaskDetailPanel.jsx       # Slide-out task detail
 │   │   ├── TaskNotes.jsx             # Notes on a task
-│   │   ├── DomainBadge.jsx           # Colored domain label
+│   │   ├── DomainBadge.jsx           # Colored domain label (imports from constants)
 │   │   └── TaskStatusBadge.jsx       # Status pill
 │   ├── summary/ExecutiveSummary.jsx   # Narrative prose + week-by-week breakdown
 │   ├── layout/
@@ -69,17 +74,18 @@ src/
 ├── hooks/useLocalStorage.js
 └── utils/
     ├── weekCalculations.js           # getCurrentWeek(), getCompletionStats()
+    ├── execFramingTemplates.js       # Pillar x domain framing templates
     └── exportData.js                 # JSON export/import
 ```
 
 ## Important Context
-- **v3.0 (Feb 2026)**: Restructured cert spine across all 4 quarters (AIGP Q1 → Gen-AI Leader Q2 → NCP-AAI Q3 → AWS Q4). Added Google Cloud Gen-AI Leader and AWS certs. Added AI Governance Charter and Risk Register as Q1 deliverables. Reframed around four pillars: governance & risk, strategy & transformation, systems & platforms, fractional CAIO & executive positioning. Split Q1 weeks 5–8 into two blocks.
-- **v2.0 (Feb 2026)**: Earlier rewrite from traditional ML/Python/AWS path → governance + fractional CAIO + orchestration. Driven by Compass analysis showing ~40% of original plan was wasted effort given AI capability shifts.
+- **v4.0 (Apr 2026)**: Complete rework from 52-week CAIO study plan to quarterly agent engineering plan. Driven by reality: spent 9 weeks building DroplightOS (152 PRs, 47 DB models, production infrastructure) instead of following the study plan. New approach: build-first (learn by shipping), quarterly cadence (12 weeks detailed, 12 weeks sketch, re-evaluate), new domains (build/learn/credentials/income/portfolio/community).
+- **v3.0 (Feb 2026)**: Prior version — 52-week CAIO credential/governance plan with 4-quarter cert spine.
 - **localStorage matters**: Editing seedData.js only affects new users or after a Reset. Existing users must Reset in Settings to pick up seed changes.
-- **User profile**: Non-traditional background (church planting → family office AI → CAIO). The plan leverages this as a strength, not a weakness.
-- **78 tasks** across 4 quarters, 18 week-blocks. Task IDs: t001–t078.
-- **Certification spine**: IAPP AIGP (Q1 w7–8) → Google Cloud Gen-AI Leader (Q2 w22–24) → NVIDIA NCP-AAI (Q3 w31–34) → AWS AI/Architecture (Q4 w44–47).
-- **Fractional CAIO** is the primary income vehicle (2–3 clients at $8K–$10K/month = $192K–$360K/yr).
+- **User profile**: Non-traditional background (church planting → family office AI → agent engineering). Currently $110K Head of AI, targeting $200K+ via AI implementation services or full-time AI engineering role. Learns by building, not reading.
+- **42 tasks** across 2 quarters, 9 week-blocks. Task IDs: t001–t042.
+- **Certification**: AIGP on the table for Q1. Additional certs evaluated at end of each quarter based on market direction.
+- **DroplightOS**: Production M&A platform (the "BUILD" project). 47 DB models, real auth/AI/storage, Gemini + Together AI, 5 cron jobs.
 
 ## Commands
 ```bash
