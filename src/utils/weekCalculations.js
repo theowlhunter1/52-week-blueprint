@@ -1,17 +1,17 @@
-export function getCurrentWeek(startDate) {
+import { MAX_WEEK } from '../constants/domains';
+
+export function getCurrentWeek(startDate, maxWeek = MAX_WEEK) {
   if (!startDate) return 1;
   const start = new Date(startDate);
   const now = new Date();
   const diffMs = now - start;
   const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1;
-  return Math.max(1, Math.min(52, diffWeeks));
+  return Math.max(1, Math.min(maxWeek, diffWeeks));
 }
 
 export function getQuarterForWeek(week) {
-  if (week <= 13) return 'q1';
-  if (week <= 26) return 'q2';
-  if (week <= 39) return 'q3';
-  return 'q4';
+  if (week <= 12) return 'q1';
+  return 'q2';
 }
 
 export function getWeekDate(startDate, weekNumber) {
@@ -43,12 +43,10 @@ export function getCompletionStats(tasks) {
 
 export function getQuarterStats(tasks, quarterId) {
   const quarterWeeks = {
-    q1: [1, 13],
-    q2: [14, 26],
-    q3: [27, 39],
-    q4: [40, 52],
+    q1: [1, 12],
+    q2: [13, 24],
   };
-  const [start, end] = quarterWeeks[quarterId];
+  const [start, end] = quarterWeeks[quarterId] || [1, 12];
   const quarterTasks = tasks.filter(t => t.due_week >= start && t.due_week <= end);
   return getCompletionStats(quarterTasks);
 }
@@ -71,7 +69,6 @@ export function getAdaptiveBlockDates(allBlocks, startDate) {
   const result = new Map();
   if (!startDate || !allBlocks || allBlocks.length === 0) return result;
 
-  // Sort blocks by week_range start
   const sorted = [...allBlocks].sort((a, b) => a.week_range[0] - b.week_range[0]);
 
   let nextStart = null;

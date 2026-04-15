@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { usePlan } from '../../context/PlanContext';
 import { getCurrentWeek } from '../../utils/weekCalculations';
+import { MAX_WEEK } from '../../constants/domains';
 import QuarterSection from './QuarterSection';
 import TaskDetailPanel from '../task/TaskDetailPanel';
 import TimelineProgressBar from './TimelineProgressBar';
@@ -23,11 +24,11 @@ export default function Timeline() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Timeline</h1>
-          <p className="text-sm text-text-secondary mt-1">52-week career development plan</p>
+          <p className="text-sm text-text-secondary mt-1">Quarterly career development plan</p>
         </div>
         <div className="text-right">
           <span className="text-2xl font-bold text-accent">Week {currentWeek}</span>
-          <span className="text-sm text-text-muted ml-1">of 52</span>
+          <span className="text-sm text-text-muted ml-1">of {MAX_WEEK}</span>
         </div>
       </div>
 

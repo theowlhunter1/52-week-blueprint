@@ -1,16 +1,15 @@
 import { usePlan } from '../../context/PlanContext';
 import { getQuarterStats } from '../../utils/weekCalculations';
 
-const quarterMeta = [
-  { id: 'q1', label: 'Q1', color: 'var(--color-q1)' },
-  { id: 'q2', label: 'Q2', color: 'var(--color-q2)' },
-  { id: 'q3', label: 'Q3', color: 'var(--color-q3)' },
-  { id: 'q4', label: 'Q4', color: 'var(--color-q4)' },
-];
-
 export default function QuarterBars() {
-  const { getAllTasks } = usePlan();
+  const { state, getAllTasks } = usePlan();
   const tasks = getAllTasks();
+
+  const quarterMeta = state.quarters.map(q => ({
+    id: q.id,
+    label: q.id.toUpperCase(),
+    color: q.color,
+  }));
 
   return (
     <div className="bg-bg-secondary border border-border rounded-xl p-5">

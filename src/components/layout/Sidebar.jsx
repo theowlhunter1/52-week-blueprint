@@ -65,7 +65,7 @@ export default function Sidebar() {
   const [goalDraft, setGoalDraft] = useState('');
   const goalRef = useRef(null);
 
-  const goal = state.meta?.goal || '$95K → $250K+';
+  const goal = state.meta?.goal || 'Agent Engineer to $200K+';
 
   useEffect(() => {
     if (editingGoal && goalRef.current) goalRef.current.focus();
@@ -85,7 +85,7 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-56 bg-bg-secondary border-r border-border flex flex-col z-40">
       <div className="px-5 py-5 border-b border-border">
-        <h1 className="text-accent font-bold text-lg leading-tight">52-Week<br />Blueprint</h1>
+        <h1 className="text-accent font-bold text-lg leading-tight">Blueprint</h1>
       </div>
       <nav className="flex-1 py-4 px-3 space-y-1">
         {navItems.map(({ to, label, icon: Icon }) => (
