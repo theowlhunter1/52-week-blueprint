@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { usePlan } from '../../context/PlanContext';
 
 const navItems = [
@@ -58,18 +58,23 @@ function MoonIcon() {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen, onMobileClose }) {
   const { state, dispatch } = usePlan();
   const isDark = state.settings?.theme !== 'light';
   const [editingGoal, setEditingGoal] = useState(false);
   const [goalDraft, setGoalDraft] = useState('');
   const goalRef = useRef(null);
+  const location = useLocation();
 
   const goal = state.meta?.goal || 'Agent Engineer to $200K+';
 
   useEffect(() => {
     if (editingGoal && goalRef.current) goalRef.current.focus();
   }, [editingGoal]);
+
+  useEffect(() => {
+    if (mobileOpen) onMobileClose?.();
+  }, [location.pathname]);
 
   const saveGoal = () => {
     setEditingGoal(false);
@@ -82,10 +87,17 @@ export default function Sidebar() {
     dispatch({ type: 'UPDATE_SETTINGS', payload: { theme: isDark ? 'light' : 'dark' } });
   };
 
-  return (
-    <aside className="fixed left-0 top-0 h-screen w-56 bg-bg-secondary border-r border-border flex flex-col z-40">
-      <div className="px-5 py-5 border-b border-border">
+  const sidebarContent = (
+    <>
+      <div className="px-5 py-5 border-b border-border flex items-center justify-between">
         <h1 className="text-accent font-bold text-lg leading-tight">Blueprint</h1>
+        {mobileOpen && (
+          <button onClick={onMobileClose} className="md:hidden p-1 rounded-lg text-text-secondary hover:text-text-primary">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
       <nav className="flex-1 py-4 px-3 space-y-1">
         {navItems.map(({ to, label, icon: Icon }) => (
@@ -126,12 +138,41 @@ export default function Sidebar() {
         )}
         <button
           onClick={toggleTheme}
-          className="p-1.5 rounded-lg text-text-secondary hover:text-accent hover:bg-bg-hover transition-colors"
+          className="p-1.5 rounded-lg text-text-secondary hover:text-accent hover:bg-bg-hover transition-colors flex-shrink-0"
           title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {isDark ? <SunIcon /> : <MoonIcon />}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-screen w-56 bg-bg-secondary border-r border-border flex-col z-40">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={onMobileClose} />
+          <aside className="relative w-64 h-full bg-bg-secondary border-r border-border flex flex-col animate-slide-in-left">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideInLeft {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(0); }
+        }
+        .animate-slide-in-left {
+          animation: slideInLeft 0.2s ease-out;
+        }
+      `}</style>
+    </>
   );
 }

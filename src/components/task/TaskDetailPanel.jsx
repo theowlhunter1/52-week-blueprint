@@ -95,7 +95,7 @@ export default function TaskDetailPanel({ taskId, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-bg-secondary border-l border-border h-full overflow-y-auto animate-slide-in">
+      <div className="relative w-full md:max-w-lg bg-bg-secondary border-l border-border h-full overflow-y-auto animate-slide-in">
         <div className="sticky top-0 bg-bg-secondary border-b border-border px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <DomainBadge domain={task.domain} size="md" />

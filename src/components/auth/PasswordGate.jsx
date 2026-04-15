@@ -39,8 +39,8 @@ export default function PasswordGate({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center">
-      <div className="bg-bg-secondary border border-border rounded-xl p-8 w-full max-w-sm">
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4">
+      <div className="bg-bg-secondary border border-border rounded-xl p-6 sm:p-8 w-full max-w-sm">
         <h1 className="text-accent font-bold text-xl mb-1">Blueprint</h1>
         <p className="text-xs text-text-muted mb-6">Enter password to continue</p>
         <form onSubmit={handleSubmit}>
@@ -50,7 +50,7 @@ export default function PasswordGate({ children }) {
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"
-            className="w-full bg-bg-tertiary border border-border rounded-lg px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-accent"
+            className="w-full bg-bg-tertiary border border-border rounded-lg px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-accent"
           />
           {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
           <button
