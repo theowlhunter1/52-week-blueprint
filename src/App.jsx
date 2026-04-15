@@ -6,6 +6,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import Timeline from './components/timeline/Timeline';
 import ExecutiveSummary from './components/summary/ExecutiveSummary';
 import Settings from './components/settings/Settings';
+import PasswordGate from './components/auth/PasswordGate';
 
 function ThemeApplier({ children }) {
   const { state } = usePlan();
@@ -20,6 +21,7 @@ function ThemeApplier({ children }) {
 
 export default function App() {
   return (
+    <PasswordGate>
     <PlanProvider>
       <ThemeApplier>
         <BrowserRouter>
@@ -34,5 +36,6 @@ export default function App() {
         </BrowserRouter>
       </ThemeApplier>
     </PlanProvider>
+    </PasswordGate>
   );
 }
