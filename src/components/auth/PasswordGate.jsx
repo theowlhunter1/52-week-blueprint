@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 const STORAGE_KEY = 'blueprint-auth';
-const PASS_HASH = '4851b05b6fe7b1909986c0f3ede3a8f4680a133d7c5218f6aa94c23cf327db7e';
+const PASS_HASH = '351bb96c442be6573a2fd073d4bc767fb7d94124e0eb7183a22f3b6ae9f6fe54';
 
 async function hashPassword(password) {
   const encoded = new TextEncoder().encode(password);
